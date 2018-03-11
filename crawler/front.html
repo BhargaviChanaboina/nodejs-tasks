@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #input1{height:40px; width:250px;background-color:azure;font-size:20px; }
+        </style>
+    </head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<body>
+<div ng-app="myApp" ng-controller="myCtrl">
+<center> <input ng-model="name" id="input1" /><br><br>
+<input type="button" style="height:40px;width:100px;" ng-click="srch()" value="click">
+<ul ng-repeat="link in info" style="list-style:none;" ><li><a href={{link.value}}>{{link.value}}</a></li></ul>
+</center>
+</div>
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope,$http) {
+    $scope.name = "";
+    $scope.info=[];
+    var index=0;
+    $scope.srch=function(){
+        console.log($scope.name);
+         var Data={srh:$scope.name,};
+         $http({
+         method : 'POST',
+         url    : '/send',
+         headers: {'Content-Type':'application/json'},
+         data   : angular.fromJson(Data)
+         }).then(function(res){
+            console.log("in success");
+            index=0;
+            $scope.info=[];
+            for(var key in res.data){
+                $scope.info.push({'index' : index, 'value': res.data[key]});
+                index++;
+                }
+            console.log($scope.info);
+            },function(err){
+                 console.log(err);
+                 });
+              }
+            });
+</script>
+</body>
+</html>
